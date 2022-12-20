@@ -3,29 +3,16 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
 	mongodb "mateuszgua/to-do-list/database"
 	userData "mateuszgua/to-do-list/database/model"
+	"mateuszgua/to-do-list/server"
+	"mateuszgua/to-do-list/server/router"
 
 	"github.com/joho/godotenv"
 )
-
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/hello" {
-		http.Error(w, "404 not found.", http.StatusNotFound)
-		return
-	}
-
-	if r.Method != "GET" {
-		http.Error(w, "Method is not supported.", http.StatusNotFound)
-		return
-	}
-
-	fmt.Fprintf(w, "Hello!")
-}
 
 func main() {
 	godotenv.Load(".env")
@@ -61,21 +48,16 @@ func main() {
 	mongoUserId, _ := mongoStore.SaveMetaData(testSaveDataInDb)
 	log.Println(mongoUserId)
 
-	fileServer := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fileServer)
-	http.HandleFunc("/hello", helloHandler)
-
 	httpPort := os.Getenv("HTTP_PORT")
-	if httpPort == "" {
-		httpPort = "8080"
+
+	router, err := router.MyRouter(httpPort)
+	if err != nil {
+		log.Fatal("failed to add router", err)
 	}
 
-	serverUrl := fmt.Sprintf(":%s", httpPort)
-	log.Printf("Starting server on http://localhost%s", serverUrl)
-
-	err = http.ListenAndServe(serverUrl, nil)
+	err = server.MyServer(httpPort, router)
 	if err != nil {
-		log.Fatal("failed to start server", err)
+		log.Fatal("failed connect with server", err)
 	}
 
 }
