@@ -8,5 +8,48 @@ services:
     networks:
       - backend
 
+  mongodb:
+    image: mongo:5.0.8
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+    volumes:
+      - mongo-data:/data/db
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - mongodb_network
+
+  mongo-express:
+    image: mongo-express:1.0.0-alpha.4
+    env_file: .env
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=${ME_DB_SERVER}
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${ME_DB_ADMINUSERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${ME_DB_ADMINPASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${ME_BASICAUTH_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${ME_BASICAUTH_PASSWORD}
+      - ME_CONFIG_MONGODB_URL=${ME_MONGODB_URL}
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    networks:
+      - mongodb_network
+    links:
+      - mongodb:mongodb
+
+volumes:
+  mongo-data:
+
+
 networks:
   backend:
+  mongodb_network:
