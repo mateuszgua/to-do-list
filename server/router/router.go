@@ -28,15 +28,15 @@ func MyRouter(httpPort string) (*mux.Router, error) {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/hello", helloHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/user/login", helloHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/user/register", helloHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/user/task", helloHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/user/task", helloHandler).Methods("POST", "OPTIONS")
-	router.HandleFunc("/user/task/{id}", helloHandler).Methods("PUT", "OPTIONS")
-	router.HandleFunc("/user/undoTask/{id}", helloHandler).Methods("PUT", "OPTIONS")
-	router.HandleFunc("/user/deleteTask/{id}", helloHandler).Methods("DELETE", "OPTIONS")
-	router.HandleFunc("/user/deleteAllTask", helloHandler).Methods("DELETE", "OPTIONS")
+	router.HandleFunc("/api/hello", helloHandler).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/user/login", helloHandler).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/user/register", helloHandler).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/user/task", helloHandler).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/user/task", helloHandler).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/user/task/{id}", helloHandler).Methods("PUT", "OPTIONS")
+	router.HandleFunc("/api/user/undoTask/{id}", helloHandler).Methods("PUT", "OPTIONS")
+	router.HandleFunc("/api/user/deleteTask/{id}", helloHandler).Methods("DELETE", "OPTIONS")
+	router.HandleFunc("/api/user/deleteAllTask", helloHandler).Methods("DELETE", "OPTIONS")
 
 	return router, nil
 }
