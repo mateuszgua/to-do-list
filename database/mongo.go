@@ -63,18 +63,12 @@ func (store MongoMetaDataStore) SaveMetaData(metaData userData.UserMetaData) (st
 	return idUser.Hex(), nil
 }
 
-func (store MongoMetaDataStore) getUserMetaData(userId string) (userData.UserMetaData, error) {
-	var mongoId primitive.ObjectID
-	err := mongoId.UnmarshalText([]byte(userId))
-	if err != nil {
-		return userData.UserMetaData{}, fmt.Errorf("failed to unmarschal userID: %w", err)
-	}
-
+func (store MongoMetaDataStore) getUserMetaData(email string) (userData.UserMetaData, error) {
 	collection := store.Client.Database(store.DatabaseName).Collection(store.CollectionName)
-	filter := bson.D{{Key: "_id", Value: mongoId}}
+	filter := bson.D{{Key: "user_email", Value: email}}
 
 	var result userData.UserMetaData
-	err = collection.FindOne(context.Background(), filter).Decode(&result)
+	err := collection.FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		return result, fmt.Errorf("failed to get user data from database: %w", err)
 	}
@@ -83,7 +77,7 @@ func (store MongoMetaDataStore) getUserMetaData(userId string) (userData.UserMet
 
 }
 
-func (store MongoMetaDataStore) GetUserMetaData(email string) (string, error) {
+func (store MongoMetaDataStore) GetUserMetaData(email string) (userData.UserMetaData, error) {
 	currentUser, err := store.getUserMetaData(email)
-	return currentUser.FirstName, err
+	return currentUser, err
 }
