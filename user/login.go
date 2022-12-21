@@ -6,6 +6,7 @@ import (
 	mongo "mateuszgua/to-do-list/database"
 	userData "mateuszgua/to-do-list/database/model"
 	"net/http"
+	"text/template"
 
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
@@ -51,4 +52,22 @@ func GenerateJWT() (string, error) {
 		return "", err
 	}
 	return tokenString, nil
+}
+
+func myLogin() {
+	tmpl := template.Must(template.ParseFiles("login.html"))
+
+	http.HandleFunc("/api/login", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			tmpl.Execute(w, nil)
+			return
+		}
+		user := userData.UserMetaData{
+			Email:    r.FormValue("email"),
+			Password: r.FormValue("password"),
+		}
+		_ = user
+
+		tmpl.Execute(w, struct{ Success bool }{true})
+	})
 }
