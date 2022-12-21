@@ -28,7 +28,7 @@ func userSignUp(mongoStore *mongo.MongoMetaDataStore, response http.ResponseWrit
 func getHash(pwd []byte) string {
 	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
-		log.Println("failed to generate hash password", err)
+		log.Println("failed to generate hash password: %w", err)
 
 	}
 	return string(hash)

@@ -7,6 +7,7 @@ import (
 
 	userData "mateuszgua/to-do-list/database/model"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -60,4 +61,29 @@ func (store MongoMetaDataStore) SaveMetaData(metaData userData.UserMetaData) (st
 
 	idUser := insertResult.InsertedID.(primitive.ObjectID)
 	return idUser.Hex(), nil
+}
+
+func (store MongoMetaDataStore) getUserMetaData(userId string) (userData.UserMetaData, error) {
+	var mongoId primitive.ObjectID
+	err := mongoId.UnmarshalText([]byte(userId))
+	if err != nil {
+		return userData.UserMetaData{}, fmt.Errorf("failed to unmarschal userID: %w", err)
+	}
+
+	collection := store.Client.Database(store.DatabaseName).Collection(store.CollectionName)
+	filter := bson.D{{Key: "_id", Value: mongoId}}
+
+	var result userData.UserMetaData
+	err = collection.FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		return result, fmt.Errorf("failed to get user data from database: %w", err)
+	}
+
+	return result, nil
+
+}
+
+func (store MongoMetaDataStore) GetUserMetaData(email string) (string, error) {
+	currentUser, err := store.getUserMetaData(email)
+	return currentUser.FirstName, err
 }
