@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"mateuszgua/to-do-list/handle"
+
 	"github.com/gorilla/mux"
 )
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/hello" {
+	if r.URL.Path != "/api/hello" {
 		http.Error(w, "404 not found.", http.StatusNotFound)
 		return
 	}
@@ -29,7 +31,7 @@ func MyRouter(httpPort string) (*mux.Router, error) {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/hello", helloHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/api/user/login", helloHandler).Methods("GET", "OPTIONS")
+	router.HandleFunc("/api/user/login", handle.UserLogin)
 	router.HandleFunc("/api/user/register", helloHandler).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/user/task", helloHandler).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/user/task", helloHandler).Methods("POST", "OPTIONS")

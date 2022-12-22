@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	mongodb "mateuszgua/to-do-list/database"
-	userData "mateuszgua/to-do-list/database/model"
 	"mateuszgua/to-do-list/server"
 	"mateuszgua/to-do-list/server/router"
 
@@ -35,18 +33,19 @@ func main() {
 		log.Fatal("failed to create new mongo client", err)
 	}
 
-	currentTime := time.Now()
-
-	testSaveDataInDb := userData.UserMetaData{
-		FirstName:      "Jan",
-		LastName:       "Kowalski",
-		Password:       "Qwerty1234",
-		Email:          "jankowalski@gmail.com",
-		IndexationDate: currentTime,
-	}
-
-	mongoUserId, _ := mongoStore.SaveMetaData(testSaveDataInDb)
-	log.Println(mongoUserId)
+	_ = mongoStore
+	// currentTime := time.Now()
+	//
+	// testSaveDataInDb := userData.UserMetaData{
+	// FirstName:      "Jan",
+	// LastName:       "Kowalski",
+	// Password:       "Qwerty1234",
+	// Email:          "jankowalski@gmail.com",
+	// IndexationDate: currentTime,
+	// }
+	//
+	// mongoUserId, _ := mongoStore.SaveMetaData(testSaveDataInDb)
+	// log.Println(mongoUserId)
 
 	httpPort := os.Getenv("HTTP_PORT")
 
