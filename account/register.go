@@ -66,5 +66,5 @@ func prepareResponse(user *userData.UserMetaData, accounts []userData.ResponseAc
 }
 
 // func Register(firstName string, lastName string, email string, pass string) map[string]interface{} {
-// 	valid :=
+// valid :=
 // }
