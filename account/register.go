@@ -6,7 +6,9 @@ import (
 	mongo "mateuszgua/to-do-list/database"
 	userData "mateuszgua/to-do-list/database/model"
 	"net/http"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,3 +34,37 @@ func getHash(pwd []byte) string {
 	}
 	return string(hash)
 }
+
+func prepareToken(user *userData.UserMetaData) string {
+	tokenContent := jwt.MapClaims{
+		"user_id": user.ID,
+		"expiry":  time.Now().Add(time.Minute * 60).Unix(),
+	}
+	jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenContent)
+	token, err := jwtToken.SignedString([]byte("TokenPassword"))
+	if err != nil {
+		log.Println("failed to get token password: %w", err)
+	}
+	return token
+}
+
+func prepareResponse(user *userData.UserMetaData, accounts []userData.ResponseAccount) map[string]interface{} {
+	responseUser := *&userData.ResponseUser{
+		ID:        user.ID,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Accounts:  accounts,
+	}
+	var token = prepareToken(user)
+	var response = map[string]interface{}{"message": "all is fine"}
+	response["jwt"] = token
+	response["data"] = responseUser
+
+	return response
+
+}
+
+// func Register(firstName string, lastName string, email string, pass string) map[string]interface{} {
+// 	valid :=
+// }
