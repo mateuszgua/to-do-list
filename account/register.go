@@ -5,6 +5,7 @@ import (
 	"log"
 	mongo "mateuszgua/to-do-list/database"
 	userData "mateuszgua/to-do-list/database/model"
+	"mateuszgua/to-do-list/helpers"
 	"net/http"
 	"time"
 
@@ -65,6 +66,28 @@ func prepareResponse(user *userData.UserMetaData, accounts []userData.ResponseAc
 
 }
 
-// func Register(firstName string, lastName string, email string, pass string) map[string]interface{} {
-// valid :=
-// }
+func Register(firstName string, lastName string, email string, pass string) map[string]interface{} {
+	valid := helpers.Validation(
+		[]userData.Validation{
+			{Value: firstName, Valid: "firstname"},
+			{Value: lastName, Valid: "lastName"},
+			{Value: email, Valid: "email"},
+			{Value: pass, Valid: "password"},
+		})
+	if valid {
+		generatedPassword := helpers.HashAndSalt([]byte(pass))
+		user := &userData.UserMetaData{FirstName: firstName, LastName: lastName, Email: email, Password: generatedPassword}
+
+		account := &userData.Account{Type: "Daily account", FirstName: string(firstName + "'s" + "account"), Balance: 0, UserId: user.ID}
+
+		accounts := []userData.ResponseAccount{}
+		respAccount := userData.ResponseAccount{ID: account.UserId, FirstName: account.FirstName, Balance: int(account.Balance)}
+		accounts = append(accounts, respAccount)
+
+		var response = prepareResponse(user, accounts)
+
+		return response
+	} else {
+		return map[string]interface{}{"message": "not valid values"}
+	}
+}

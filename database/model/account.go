@@ -2,8 +2,9 @@ package model
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type ResponseAccount struct {
-	ID        primitive.ObjectID
+type Account struct {
+	Type      string
 	FirstName string
-	Balance   int
+	Balance   uint
+	UserId    primitive.ObjectID
 }
