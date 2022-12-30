@@ -28,6 +28,8 @@ func main() {
 	// add collection name for user and for task
 	uri := fmt.Sprintf("mongodb://%s:%s@%s%s", userName, userPassword, mongoHost, mongoServerPort)
 
+	log.Printf("URI: %s", uri)
+
 	mongoStore, err := mongodb.NewMongoMetaDataStore(uri, authSource, authUserName, authUserPassword, databaseName, collectionName)
 	if err != nil {
 		log.Fatal("failed to create new mongo client", err)
