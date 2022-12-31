@@ -31,7 +31,7 @@ func MyRouter(httpPort string) (*mux.Router, error) {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/hello", helloHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/api/user/login", handle.UserLogin)
+	router.HandleFunc("/api/user/login", handle.UserLogin).Methods("POST")
 	router.HandleFunc("/api/user/register", handle.UserRegister).Methods("POST")
 	router.HandleFunc("/api/user/task", helloHandler).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/user/task", helloHandler).Methods("POST", "OPTIONS")
