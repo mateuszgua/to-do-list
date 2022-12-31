@@ -7,6 +7,7 @@ import (
 
 	userData "mateuszgua/to-do-list/database/model"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -60,4 +61,23 @@ func (store MongoMetaDataStore) SaveMetaData(metaData userData.UserMetaData) (st
 
 	idUser := insertResult.InsertedID.(primitive.ObjectID)
 	return idUser.Hex(), nil
+}
+
+func (store MongoMetaDataStore) getUserMetaData(email string) (userData.UserMetaData, error) {
+	collection := store.Client.Database(store.DatabaseName).Collection(store.CollectionName)
+	filter := bson.D{{Key: "user_email", Value: email}}
+
+	var result userData.UserMetaData
+	err := collection.FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		return result, fmt.Errorf("failed to get user data from database: %w", err)
+	}
+
+	return result, nil
+
+}
+
+func (store MongoMetaDataStore) GetUserMetaData(email string) (userData.UserMetaData, error) {
+	currentUser, err := store.getUserMetaData(email)
+	return currentUser, err
 }
