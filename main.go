@@ -17,19 +17,19 @@ import (
 func main() {
 	godotenv.Load(".env")
 
-	userName := os.Getenv("MONGO_USERNAME")
-	userPassword := os.Getenv("MONGO_PASSWORD")
+	// userName := os.Getenv("MONGO_USERNAME")
+	// userPassword := os.Getenv("MONGO_PASSWORD")
 	databaseName := os.Getenv("MONGO_DATABASE_NAME")
 	collectionName := os.Getenv("MONGO_COLLECTION_NAME")
-	mongoHost := os.Getenv("MONGO_HOST")
-	mongoServerPort := os.Getenv("MONGO_PORT")
+	// mongoHost := os.Getenv("MONGO_HOST")
+	// mongoServerPort := os.Getenv("MONGO_PORT")
 	authSource := os.Getenv("MONGO_AUTH_SOURCE")
 	authUserName := os.Getenv("MONGO_AUTH_USER")
 	authUserPassword := os.Getenv("MONGO_AUTH_PASSWORD")
 
 	// add collection name for user and for task
-	uri := fmt.Sprintf("mongodb://%s:%s@%s%s", userName, userPassword, mongoHost, mongoServerPort)
-	// uri := fmt.Sprintf("mongodb://user:user@localhost:27017")
+	// uri := fmt.Sprintf("mongodb://%s:%s@%s%s", userName, userPassword, mongoHost, mongoServerPort)
+	uri := fmt.Sprintf("mongodb://user:user@localhost:27017")
 	//delete
 	log.Printf("URI: %s", uri)
 
