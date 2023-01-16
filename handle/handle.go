@@ -2,7 +2,6 @@ package handle
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	helpers "mateuszgua/to-do-list/helpers"
@@ -29,6 +28,46 @@ func IndexPageHandler(response http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(response, body)
 }
 
+func PanelPageHandler(response http.ResponseWriter, request *http.Request) {
+	body, _ := helpers.LoadFile("templates/panel.html")
+	fmt.Fprintf(response, body)
+}
+
+func PanelHandler(response http.ResponseWriter, request *http.Request) {
+	title := request.FormValue("title")
+	description := request.FormValue("description")
+	startDate := request.FormValue("startDate")
+	endDate := request.FormValue("endDate")
+	priority := request.FormValue("priority")
+	status := request.FormValue("status")
+
+	_title := false
+	_description := false
+	_startDate := false
+	_endDate := false
+	_priority := false
+	_status := false
+
+	_title = !helpers.IsEmpty(title)
+	_description = !helpers.IsEmpty(description)
+	_startDate = !helpers.IsEmpty(startDate)
+	_endDate = !helpers.IsEmpty(endDate)
+	_priority = !helpers.IsEmpty(priority)
+	_status = !helpers.IsEmpty(status)
+
+	if _title && _description && _startDate && _endDate && _priority && _status {
+		fmt.Fprintln(response, "Title: ", title)
+		fmt.Fprintln(response, "Description: ", description)
+		fmt.Fprintln(response, "Start date: ", startDate)
+		fmt.Fprintln(response, "End date: ", endDate)
+		fmt.Fprintln(response, "Priority: ", priority)
+		fmt.Fprintln(response, "Status: ", status)
+	} else {
+		fmt.Fprintln(response, "This fields can not be blank! Please fill all fields.")
+
+	}
+}
+
 func LoginPageHandler(response http.ResponseWriter, request *http.Request) {
 	body, _ := helpers.LoadFile("templates/login.html")
 	fmt.Fprintf(response, body)
@@ -42,8 +81,7 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 		_userIsValid := helpers.UserIsValid(email, pass)
 
 		if _userIsValid {
-			redirectTarget = "/index"
-			log.Printf("True")
+			redirectTarget = "/panel"
 		} else {
 			redirectTarget = "/register"
 		}
@@ -56,7 +94,7 @@ func RegisterPageHandler(response http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(response, body)
 }
 
-func RegisterHandler(respone http.ResponseWriter, request *http.Request) {
+func RegisterHandler(response http.ResponseWriter, request *http.Request) {
 	request.ParseForm()
 
 	userName := request.FormValue("name")
@@ -78,13 +116,13 @@ func RegisterHandler(respone http.ResponseWriter, request *http.Request) {
 	_confirmPwd = !helpers.IsEmpty(confirmPwd)
 
 	if _userName && _userNick && _email && _pwd && _confirmPwd {
-		fmt.Fprintln(respone, "Username: ", userName)
-		fmt.Fprintln(respone, "Nick: ", userNick)
-		fmt.Fprintln(respone, "Email: ", email)
-		fmt.Fprintln(respone, "Password: ", pwd)
-		fmt.Fprintln(respone, "ConfirmPassword: ", confirmPwd)
+		fmt.Fprintln(response, "Username: ", userName)
+		fmt.Fprintln(response, "Nick: ", userNick)
+		fmt.Fprintln(response, "Email: ", email)
+		fmt.Fprintln(response, "Password: ", pwd)
+		fmt.Fprintln(response, "ConfirmPassword: ", confirmPwd)
 	} else {
-		fmt.Fprintln(respone, "This fields can not be blank!")
+		fmt.Fprintln(response, "This fields can not be blank!")
 	}
 }
 
