@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"io/ioutil"
 	"log"
 	"regexp"
 
@@ -44,4 +45,32 @@ func Validation(values []userData.Validation) bool {
 	}
 
 	return true
+}
+
+func UserIsValid(userEmail string, pwd string) bool {
+	_userEmail, _pwd, _isValid := "user1@email.com", "qwerty1234", false
+
+	if userEmail == _userEmail && pwd == _pwd {
+		_isValid = true
+	} else {
+		_isValid = false
+	}
+
+	return _isValid
+}
+
+func LoadFile(fileName string) (string, error) {
+	bytes, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+func IsEmpty(data string) bool {
+	if len(data) <= 0 {
+		return true
+	} else {
+		return false
+	}
 }

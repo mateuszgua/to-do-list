@@ -3,9 +3,8 @@ module mateuszgua/to-do-list
 go 1.19
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/dgrijalva/jwt-go v1.0.3-0.20210802184156-9742bd7fca1c
 	github.com/gorilla/mux v1.8.0
-	github.com/gorilla/sessions v1.2.1
 	github.com/joho/godotenv v1.4.0
 	go.mongodb.org/mongo-driver v1.11.1
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
@@ -13,7 +12,6 @@ require (
 
 require (
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pkg/errors v0.9.1 // indirect
