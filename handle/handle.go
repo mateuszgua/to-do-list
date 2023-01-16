@@ -2,9 +2,14 @@ package handle
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 
+	mongo "mateuszgua/to-do-list/database"
+	userData "mateuszgua/to-do-list/database/model"
 	helpers "mateuszgua/to-do-list/helpers"
+	config "mateuszgua/to-do-list/utils"
 )
 
 type Login struct {
@@ -13,23 +18,47 @@ type Login struct {
 }
 
 type Register struct {
-	FirstName string
-	LastName  string
-	Email     string
-	Password  string
+	Name     string
+	Nick     string
+	Email    string
+	Password string
 }
 
 type ErrResponse struct {
 	Message string
 }
 
+// type Book struct {
+// 	Title  string
+// 	Author string
+// }
+
 func IndexPageHandler(response http.ResponseWriter, request *http.Request) {
-	body, _ := helpers.LoadFile("templates/index.html")
+	// book := Book{"Building Web Apps with Go", "Jeremy Saenz"}
+
+	// fp := path.Join("app/to-do-list/templates/", "index.html")
+	// log.Println(fp)
+	// tmpl, err := template.ParseFiles(fp)
+	// if err != nil {
+	// 	http.Error(response, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// if err := tmpl.Execute(response, book); err != nil {
+	// 	http.Error(response, err.Error(), http.StatusInternalServerError)
+	// }
+	body, err := helpers.LoadFile("./templates/index.html")
+	if err != nil {
+		log.Println("failed to load index page: %w", err)
+	}
 	fmt.Fprintf(response, body)
 }
 
 func PanelPageHandler(response http.ResponseWriter, request *http.Request) {
-	body, _ := helpers.LoadFile("templates/panel.html")
+	body, err := helpers.LoadFile("/templates/panel.html")
+	if err != nil {
+		log.Println("failed to load panel page: %w", err)
+	}
 	fmt.Fprintf(response, body)
 }
 
@@ -69,7 +98,10 @@ func PanelHandler(response http.ResponseWriter, request *http.Request) {
 }
 
 func LoginPageHandler(response http.ResponseWriter, request *http.Request) {
-	body, _ := helpers.LoadFile("templates/login.html")
+	body, err := helpers.LoadFile("./templates/login.html")
+	if err != nil {
+		log.Println("failed to load login page: %w", err)
+	}
 	fmt.Fprintf(response, body)
 }
 
@@ -90,7 +122,10 @@ func LoginHandler(response http.ResponseWriter, request *http.Request) {
 }
 
 func RegisterPageHandler(response http.ResponseWriter, request *http.Request) {
-	body, _ := helpers.LoadFile("templates/register.html")
+	body, err := helpers.LoadFile("templates/register.html")
+	if err != nil {
+		log.Println("failed to load register page: %w", err)
+	}
 	fmt.Fprintf(response, body)
 }
 
@@ -116,11 +151,29 @@ func RegisterHandler(response http.ResponseWriter, request *http.Request) {
 	_confirmPwd = !helpers.IsEmpty(confirmPwd)
 
 	if _userName && _userNick && _email && _pwd && _confirmPwd {
-		fmt.Fprintln(response, "Username: ", userName)
-		fmt.Fprintln(response, "Nick: ", userNick)
-		fmt.Fprintln(response, "Email: ", email)
-		fmt.Fprintln(response, "Password: ", pwd)
-		fmt.Fprintln(response, "ConfirmPassword: ", confirmPwd)
+		//Check if not exist
+		config := config.LoadConfig()
+		mongoStore, err := mongo.NewMongoMetaDataStore(config.Uri, config.AuthSource, config.AuthUserName, config.AuthUserPassword, config.DatabaseName, config.CollectionName)
+		if err != nil {
+			log.Fatal("failed to create new mongo client", err)
+		}
+
+		currentTime := time.Now()
+
+		saveUserInDatabase := userData.UserMetaData{
+			Name:           userName,
+			Nick:           userNick,
+			Password:       pwd,
+			Email:          email,
+			IndexationDate: currentTime,
+		}
+
+		mongoUserId, err := mongoStore.SaveMetaData(saveUserInDatabase)
+		if err != nil {
+			log.Fatal("failed to save user in database", err)
+		}
+		log.Println(mongoUserId)
+
 	} else {
 		fmt.Fprintln(response, "This fields can not be blank!")
 	}

@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o /to-do-list
 
 FROM gcr.io/distroless/base-debian10
 
-WORKDIR /
+WORKDIR /app
 
 COPY --from=builder /to-do-list /to-do-list
 
