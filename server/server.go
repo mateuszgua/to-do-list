@@ -16,7 +16,7 @@ func MyServer(httpPort string, router *mux.Router) error {
 	serverUrl := fmt.Sprintf(":%s", httpPort)
 	log.Printf("Starting server on http://localhost%s", serverUrl)
 
-	err := http.ListenAndServe(serverUrl, router)
+	err := http.ListenAndServe(serverUrl, nil)
 	if err != nil {
 		log.Fatal("failed to start server", err)
 	}

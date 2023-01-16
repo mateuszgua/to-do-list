@@ -47,11 +47,11 @@ func prepareToken(user *userData.UserMetaData) string {
 
 func prepareResponse(user *userData.UserMetaData, accounts []userData.ResponseAccount) map[string]interface{} {
 	responseUser := *&userData.ResponseUser{
-		ID:        user.ID,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-		Accounts:  accounts,
+		ID:       user.ID,
+		Name:     user.Name,
+		Nick:     user.Nick,
+		Email:    user.Email,
+		Accounts: accounts,
 	}
 	var token = prepareToken(user)
 	var response = map[string]interface{}{"message": "all is fine"}
@@ -62,22 +62,22 @@ func prepareResponse(user *userData.UserMetaData, accounts []userData.ResponseAc
 
 }
 
-func Register(firstName string, lastName string, email string, pass string) map[string]interface{} {
+func Register(name string, nick string, email string, pass string) map[string]interface{} {
 	valid := helpers.Validation(
 		[]userData.Validation{
-			{Value: firstName, Valid: "firstname"},
-			{Value: lastName, Valid: "lastName"},
+			{Value: name, Valid: "name"},
+			{Value: nick, Valid: "nick"},
 			{Value: email, Valid: "email"},
 			{Value: pass, Valid: "password"},
 		})
 	if valid {
 		generatedPassword := helpers.HashAndSalt([]byte(pass))
-		user := &userData.UserMetaData{FirstName: firstName, LastName: lastName, Email: email, Password: generatedPassword}
+		user := &userData.UserMetaData{Name: name, Nick: nick, Email: email, Password: generatedPassword}
 
-		account := &userData.Account{Type: "Daily account", FirstName: string(firstName + "'s" + "account"), Balance: 0, UserId: user.ID}
+		account := &userData.Account{Type: "Daily account", Name: string(name + "'s" + "account"), Balance: 0, UserId: user.ID}
 
 		accounts := []userData.ResponseAccount{}
-		respAccount := userData.ResponseAccount{ID: account.UserId, FirstName: account.FirstName, Balance: int(account.Balance)}
+		respAccount := userData.ResponseAccount{ID: account.UserId, Name: account.Name, Balance: int(account.Balance)}
 		accounts = append(accounts, respAccount)
 
 		var response = prepareResponse(user, accounts)

@@ -1,44 +1,30 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 
-	"mateuszgua/to-do-list/handle"
-
 	"github.com/gorilla/mux"
+
+	"mateuszgua/to-do-list/handle"
 )
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/api/hello" {
-		http.Error(w, "404 not found.", http.StatusNotFound)
-		return
-	}
+var router = mux.NewRouter()
 
-	if r.Method != "GET" {
-		http.Error(w, "Method is not supported.", http.StatusNotFound)
-		return
-	}
+func MyRouter() (*mux.Router, error) {
 
-	fmt.Fprintf(w, "Hello!")
-}
+	// router.HandleFunc("/api/hello", helloHandler).Methods("GET", "OPTIONS")
+	router.HandleFunc("/", handle.LoginPageHandler).Methods("GET")
+	router.HandleFunc("/index", handle.IndexPageHandler)
+	router.HandleFunc("/register", handle.RegisterPageHandler).Methods("GET")
+	router.HandleFunc("/register", handle.RegisterHandler).Methods("POST")
+	router.HandleFunc("/login", handle.LoginHandler).Methods("POST")
+	// router.HandleFunc("/api/user/task", helloHandler).Methods("GET", "OPTIONS")
+	// router.HandleFunc("/api/user/task", helloHandler).Methods("POST", "OPTIONS")
+	// router.HandleFunc("/api/user/task/{id}", helloHandler).Methods("PUT", "OPTIONS")
+	// router.HandleFunc("/api/user/undoTask/{id}", helloHandler).Methods("PUT", "OPTIONS")
+	// router.HandleFunc("/api/user/deleteTask/{id}", helloHandler).Methods("DELETE", "OPTIONS")
+	// router.HandleFunc("/api/user/deleteAllTask", helloHandler).Methods("DELETE", "OPTIONS")
 
-func MyRouter(httpPort string) (*mux.Router, error) {
-
-	fileServer := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fileServer)
-
-	router := mux.NewRouter()
-
-	router.HandleFunc("/api/hello", helloHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/api/user/login", handle.UserLogin).Methods("POST")
-	router.HandleFunc("/api/user/register", handle.UserRegister).Methods("POST")
-	router.HandleFunc("/api/user/task", helloHandler).Methods("GET", "OPTIONS")
-	router.HandleFunc("/api/user/task", helloHandler).Methods("POST", "OPTIONS")
-	router.HandleFunc("/api/user/task/{id}", helloHandler).Methods("PUT", "OPTIONS")
-	router.HandleFunc("/api/user/undoTask/{id}", helloHandler).Methods("PUT", "OPTIONS")
-	router.HandleFunc("/api/user/deleteTask/{id}", helloHandler).Methods("DELETE", "OPTIONS")
-	router.HandleFunc("/api/user/deleteAllTask", helloHandler).Methods("DELETE", "OPTIONS")
-
+	http.Handle("/", router)
 	return router, nil
 }
