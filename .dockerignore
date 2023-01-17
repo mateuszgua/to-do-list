@@ -3,7 +3,6 @@ __pycache__
 *.pyo
 *.pyd
 .Python
-# env
 pip-log.txt
 pip-delete-this-directory.txt
 .tox
@@ -18,3 +17,4 @@ coverage.xml
 .mypy_cache
 .pytest_cache
 .hypothesis
+__debug_bin

@@ -28,26 +28,13 @@ type ErrResponse struct {
 	Message string
 }
 
-// type Book struct {
-// 	Title  string
-// 	Author string
-// }
+type Book struct {
+	Title  string
+	Author string
+}
 
 func IndexPageHandler(response http.ResponseWriter, request *http.Request) {
-	// book := Book{"Building Web Apps with Go", "Jeremy Saenz"}
-
-	// fp := path.Join("app/to-do-list/templates/", "index.html")
-	// log.Println(fp)
-	// tmpl, err := template.ParseFiles(fp)
-	// if err != nil {
-	// 	http.Error(response, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// if err := tmpl.Execute(response, book); err != nil {
-	// 	http.Error(response, err.Error(), http.StatusInternalServerError)
-	// }
-	body, err := helpers.LoadFile("./templates/index.html")
+	body, err := helpers.LoadFile("./static/templates/index.html")
 	if err != nil {
 		log.Println("failed to load index page: %w", err)
 	}
@@ -131,7 +118,6 @@ func RegisterPageHandler(response http.ResponseWriter, request *http.Request) {
 
 func RegisterHandler(response http.ResponseWriter, request *http.Request) {
 	request.ParseForm()
-
 	userName := request.FormValue("name")
 	userNick := request.FormValue("nick")
 	email := request.FormValue("email")
@@ -151,9 +137,10 @@ func RegisterHandler(response http.ResponseWriter, request *http.Request) {
 	_confirmPwd = !helpers.IsEmpty(confirmPwd)
 
 	if _userName && _userNick && _email && _pwd && _confirmPwd {
-		//Check if not exist
-		config := config.LoadConfig()
-		mongoStore, err := mongo.NewMongoMetaDataStore(config.Uri, config.AuthSource, config.AuthUserName, config.AuthUserPassword, config.DatabaseName, config.CollectionName)
+		//Check if user exist in database
+		env := config.LoadConfig()
+		log.Printf(env.Uri)
+		mongoStore, err := mongo.NewMongoMetaDataStore(env.Uri, env.AuthSource, env.AuthUserName, env.AuthUserPassword, env.DatabaseName, env.CollectionName)
 		if err != nil {
 			log.Fatal("failed to create new mongo client", err)
 		}
