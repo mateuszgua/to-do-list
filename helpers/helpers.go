@@ -19,18 +19,18 @@ func HashAndSalt(pass []byte) string {
 }
 
 func Validation(values []userData.Validation) bool {
-	firstName := regexp.MustCompile(`^([A-Za-z0-9]{5,})+$`)
-	lastName := regexp.MustCompile(`^([A-Za-z0-9]{5,})+$`)
+	name := regexp.MustCompile(`^([A-Za-z0-9]{5,})+$`)
+	nick := regexp.MustCompile(`^([A-Za-z0-9]{5,})+$`)
 	email := regexp.MustCompile(`^[A-Za-z0-9]+[@]+[A-Za-z0-9]+[.]+[A-Za-z]+$`)
 
 	for i := 0; i < len(values); i++ {
 		switch values[i].Valid {
-		case "firstname":
-			if !firstName.MatchString(values[i].Value) {
+		case "name":
+			if !name.MatchString(values[i].Value) {
 				return false
 			}
-		case "lastname":
-			if !lastName.MatchString(values[i].Value) {
+		case "nick":
+			if !nick.MatchString(values[i].Value) {
 				return false
 			}
 		case "email":

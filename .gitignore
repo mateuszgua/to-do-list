@@ -13,9 +13,9 @@ go.work
 
 # Other
 images/*
+__debug_bin
 
 ### Go Patch ###
 /vendor/
 /Godeps/
-
 .idea
